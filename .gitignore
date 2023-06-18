@@ -1,1 +1,11 @@
+# Builds
+
 Builds/
+.tmp/
+
+
+
+# IDEs
+
+.idea/
+.vs/
