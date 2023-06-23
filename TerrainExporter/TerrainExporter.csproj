@@ -5,9 +5,9 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <PackageOutputPath>$(SolutionDir)Builds\.pack\</PackageOutputPath>
-    <BaseOutputPath>$(SolutionDir)Builds\</BaseOutputPath>
-    <BaseIntermediateOutputPath>$(SolutionDir)Builds\.temp\</BaseIntermediateOutputPath>
+    <BaseOutputPath>$(SolutionDir)Builds\bin\</BaseOutputPath>
+    <BaseIntermediateOutputPath>$(SolutionDir)Builds\int\</BaseIntermediateOutputPath>
+    <MSBUildProjectExtensionsPath>$(SolutionDir)Builds\pack\</MSBUildProjectExtensionsPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
