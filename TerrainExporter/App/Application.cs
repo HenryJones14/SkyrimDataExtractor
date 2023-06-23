@@ -93,7 +93,58 @@ namespace TerrainExporter
 			{
 				foreach (FileInfo file in InputPath.GetFiles())
 				{
-					Constructor.ConstructData(ref data, Parser.ParseData(file.FullName));
+					ParsedData[] parsed;
+
+					// Parse
+					{
+						Console.ForegroundColor = ConsoleColor.White;
+						Console.Write("Parsing: ");
+
+						Console.ForegroundColor = ConsoleColor.Green;
+						Console.Write(file.Name);
+
+						int parseleft = Console.CursorLeft;
+						int parsetop = Console.CursorTop;
+
+						Console.ForegroundColor = ConsoleColor.White;
+						Console.WriteLine();
+
+						parsed = Parser.ParseData(file.FullName);
+
+						int left = Console.CursorLeft;
+						int top = Console.CursorTop;
+
+						Console.SetCursorPosition(parseleft, parsetop);
+						Console.Write(" Done!");
+
+						Console.SetCursorPosition(left, top);
+					}
+
+					// Construct
+					{
+						Console.ForegroundColor = ConsoleColor.White;
+						Console.Write("Constructing: ");
+
+						Console.ForegroundColor = ConsoleColor.Green;
+						Console.Write(file.Name);
+
+						int constructleft = Console.CursorLeft;
+						int constructtop = Console.CursorTop;
+
+						Console.ForegroundColor = ConsoleColor.White;
+						Console.WriteLine();
+
+						Constructor.ConstructData(ref data, parsed);
+
+						int left = Console.CursorLeft;
+						int top = Console.CursorTop;
+
+						Console.SetCursorPosition(constructleft, constructtop);
+						Console.Write(" Done!");
+
+						Console.SetCursorPosition(left, top);
+					}
+
 					export = true;
 				}
 			}

@@ -73,7 +73,7 @@ namespace TerrainExporter.Data
 		{
 			if (valid)
 			{
-				return (((x << 7) | y) << 2) | 0x01;
+				return (((_x << 7) | _y) << 2) | 0x01;
 			}
 			else
 			{

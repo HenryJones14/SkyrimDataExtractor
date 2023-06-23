@@ -21,4 +21,8 @@
     <Compile Remove="Trash.cs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
+  </ItemGroup>
+
 </Project>

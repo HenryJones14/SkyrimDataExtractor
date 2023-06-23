@@ -1,5 +1,8 @@
 using TerrainExporter.Data;
 
+using System.Drawing.Imaging;
+using System.Drawing;
+
 namespace TerrainExporter.Core
 {
 	public static class Exporters
@@ -116,62 +119,34 @@ namespace TerrainExporter.Core
 
 		public static void ExportTextureBlend(in Dictionary<Position, ConstructedData> Data, string Path)
 		{
-			/*
-            Dictionary<string, Bitmap> textures = new Dictionary<string, Bitmap>();
+			using (Bitmap png = new Bitmap(RESOLUTION, RESOLUTION, PixelFormat.Format24bppRgb))
+			{
+				Position index;
 
-            for (int x = 0; x < 128; x++)
-            {
-                for (int y = 0; y < 128; y++)
-                {
-                    if (Data[x, y] != null)
-                    {
-                        for (int i = 0; i < 2; i++)
-                        {
-                            for (int j = 0; j < 2; j++)
-                            {
-                                string id = Data[x, y].texture[i, j];
+				for (int i = 0; i < 128; i++)
+				{
+					for (int j = 0; j < 128; j++)
+					{
+						index = new Position(i, j);
 
-                                if (id.Contains("null"))
-                                {
-                                    id = "_Null";
-                                }
-                                else
-                                {
-                                    if (id.Contains("snow") || id.Contains("Snow"))
-                                    {
-                                        id = "_Snow";
-                                    }
-                                    else if (id.Contains("dirt") || id.Contains("Dirt"))
-                                    {
-                                        id = "_Dirt";
-                                    }
-                                    else if (id.Contains("grass") || id.Contains("Grass"))
-                                    {
-                                        id = "_Grass";
-                                    }
-                                    else
-                                    {
-                                        id = "_Dirt";
-                                    }
-                                }
+						int transform1 = i * 32;
+						int transform2 = j * 32;
 
-                                if (!textures.ContainsKey(id))
-                                {
-                                    textures.Add(id, new Bitmap(256, 256, PixelFormat.Format24bppRgb));
-                                }
+						if (Data.ContainsKey(index))
+						{
+							for (int x = 0; x < 32; x++)
+							{
+								for (int y = 0; y < 32; y++)
+								{
+									png.SetPixel(transform1 + x, transform2 + y, Color.FromArgb(Data[index].test[x, y]));
+								}
+							}
+						}
+					}
+				}
 
-                                textures[id].SetPixel(x * 2 + i, 255 - (y * 2 + j), Color.White);
-                            }
-                        }
-                    }
-                }
-            }
-
-            foreach (var item in textures)
-            {
-                item.Value.Save(Path + item.Key + ".png", ImageFormat.Png);
-            }
-            */
+				png.Save(Path + "Alpha.png", ImageFormat.Png);
+			}
 		}
 
 		public static void ExportWaterHeight(in Dictionary<Position, ConstructedData> Data, string Path)
