@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <BaseOutputPath>$(SolutionDir)Builds\bin\</BaseOutputPath>
+    <BaseIntermediateOutputPath>$(SolutionDir)Builds\int\</BaseIntermediateOutputPath>
+    <MSBuildProjectExtensionsPath>$(SolutionDir)Builds\pack\</MSBuildProjectExtensionsPath>
+  </PropertyGroup>
+</Project>
