@@ -63,49 +63,26 @@ namespace TerrainExporter.Core
 
 		public static void ExportLandscapeColor(in Dictionary<Position, ConstructedData> Data, string Path)
 		{
-			/*
 			using (Bitmap png = new Bitmap(RESOLUTION, RESOLUTION, PixelFormat.Format24bppRgb))
 			{
+				Position index;
+
 				for (int i = 0; i < 128; i++)
 				{
 					for (int j = 0; j < 128; j++)
 					{
+						index = new Position(i, j);
+
 						int transform1 = i * 32;
 						int transform2 = j * 32;
 
-						if (Data[i, j] != null)
+						if (Data.ContainsKey(index))
 						{
-							if (Data[i, j].color.HasValue)
-							{
-								for (int x = 0; x < 32; x++)
-								{
-									for (int y = 0; y < 32; y++)
-									{
-										png.SetPixel(transform1 + x, RESOLUTION - (transform2 + y) - 1, Data[i, j].color.Value.color[x, y]);
-									}
-								}
-							}
-							else
-							{
-								for (int x = 0; x < 32; x++)
-								{
-									for (int y = 0; y < 32; y++)
-									{
-										png.SetPixel(transform1 + x, RESOLUTION - (transform2 + y) - 1, Color.White);
-									}
-								}
-							}
-						}
-						else
-						{
-							byte r = (byte)(i * 2);
-							byte g = (byte)(j * 2);
-
 							for (int x = 0; x < 32; x++)
 							{
 								for (int y = 0; y < 32; y++)
 								{
-									png.SetPixel(transform1 + x, RESOLUTION - (transform2 + y) - 1, Color.FromArgb(r, g, 0));
+									png.SetPixel(transform1 + x, transform2 + y, Data[index].color[x, y]);
 								}
 							}
 						}
@@ -114,7 +91,6 @@ namespace TerrainExporter.Core
 
 				png.Save(Path + "Color.png", ImageFormat.Png);
 			}
-			*/
 		}
 
 		public static void ExportTextureBlend(in Dictionary<Position, ConstructedData> Data, string Path)

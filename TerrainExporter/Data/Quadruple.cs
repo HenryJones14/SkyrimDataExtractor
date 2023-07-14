@@ -1,5 +1,8 @@
 namespace TerrainExporter.Data
 {
+	///<summary>
+	///
+	///</summary>
 	public struct Quadruple<T> : IEnumerable<T>
 	{
 		private T BottomLeft;

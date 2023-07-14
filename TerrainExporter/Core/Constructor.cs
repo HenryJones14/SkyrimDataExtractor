@@ -1,3 +1,4 @@
+using System.Drawing;
 using TerrainExporter.Data;
 
 namespace TerrainExporter.Core
@@ -5,6 +6,7 @@ namespace TerrainExporter.Core
 	public struct ConstructedData
 	{
 		public byte[,] test;
+		public Color[,] color;
 	}
 
 	public static class Constructor
@@ -40,6 +42,7 @@ namespace TerrainExporter.Core
 			{
 				output = new ConstructedData();
 				output.test = new byte[32, 32];
+				output.color = new Color[32, 32];
 			}
 			else
 			{
@@ -69,6 +72,21 @@ namespace TerrainExporter.Core
 				if (c == 10 || r == 10)
 				{
 					output.test[r, c] = 255;
+				}
+			}
+
+
+			for (int i = 0; i < 1089; i++)
+			{
+				int r = i / 33;
+				int c = i % 33;
+
+				if (r > 0 && c > 0) // discard duplicate data
+				{
+					if (Update.ColorRecord != null)
+					{
+						output.color[c - 1, r - 1] = Color.FromArgb(Update.ColorRecord[i * 3], Update.ColorRecord[i * 3 + 1], Update.ColorRecord[i * 3 + 2]);
+					}
 				}
 			}
 

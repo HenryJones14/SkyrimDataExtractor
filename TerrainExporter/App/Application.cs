@@ -1,12 +1,12 @@
 using TerrainExporter.Core;
 using TerrainExporter.Data;
 
-namespace TerrainExporter
+namespace TerrainExporter.App
 {
 	public static class Application
 	{
-		public static DirectoryInfo InputPath { get; private set; } = null;
-		public static DirectoryInfo OutputPath { get; private set; } = null;
+		public static DirectoryInfo? InputPath { get; private set; } = null;
+		public static DirectoryInfo? OutputPath { get; private set; } = null;
 
 		public static void Main(string[] Arguments)
 		{
@@ -78,7 +78,7 @@ namespace TerrainExporter
 
 
 				Console.ForegroundColor = ConsoleColor.White;
-				Console.SetCursorPosition(0, 3);
+				Console.SetCursorPosition(0, 2);
 			}
 
 
@@ -91,58 +91,25 @@ namespace TerrainExporter
 
 			// Parse all files and construct all data
 			{
+				Console.WriteLine();
+
 				foreach (FileInfo file in InputPath.GetFiles())
 				{
-					ParsedData[] parsed;
+					Console.WriteLine();
 
-					// Parse
 					{
-						Console.ForegroundColor = ConsoleColor.White;
-						Console.Write("Parsing: ");
+						ParsedData[] parsed;
+						uint id;
 
-						Console.ForegroundColor = ConsoleColor.Green;
-						Console.Write(file.Name);
-
-						int parseleft = Console.CursorLeft;
-						int parsetop = Console.CursorTop;
-
-						Console.ForegroundColor = ConsoleColor.White;
-						Console.WriteLine();
-
+						// Parse
+						id = Debug.StartProcess("parsing: ", file.Name);
 						parsed = Parser.ParseData(file.FullName);
+						Debug.EndProcess(id, " Finished!");
 
-						int left = Console.CursorLeft;
-						int top = Console.CursorTop;
-
-						Console.SetCursorPosition(parseleft, parsetop);
-						Console.Write(" Done!");
-
-						Console.SetCursorPosition(left, top);
-					}
-
-					// Construct
-					{
-						Console.ForegroundColor = ConsoleColor.White;
-						Console.Write("Constructing: ");
-
-						Console.ForegroundColor = ConsoleColor.Green;
-						Console.Write(file.Name);
-
-						int constructleft = Console.CursorLeft;
-						int constructtop = Console.CursorTop;
-
-						Console.ForegroundColor = ConsoleColor.White;
-						Console.WriteLine();
-
+						// Construct
+						id = Debug.StartProcess("Constructing: ", file.Name);
 						Constructor.ConstructData(ref data, parsed);
-
-						int left = Console.CursorLeft;
-						int top = Console.CursorTop;
-
-						Console.SetCursorPosition(constructleft, constructtop);
-						Console.Write(" Done!");
-
-						Console.SetCursorPosition(left, top);
+						Debug.EndProcess(id, " Finished!");
 					}
 
 					export = true;
@@ -154,15 +121,35 @@ namespace TerrainExporter
 			// Export all data
 			if (export)
 			{
+				Console.WriteLine();
+				Console.WriteLine();
+				uint id;
+
+
+				id = Debug.StartProcess("Exporting: ", "LandscapeHeight");
 				Exporters.ExportLandscapeHeight(in data, OutputPath.FullName);
-				Exporters.ExportTextureBlend(in data, OutputPath.FullName);
-				Exporters.ExportWaterHeight(in data, OutputPath.FullName);
+				Debug.EndProcess(id, " Exported!");
+
+
+				id = Debug.StartProcess("Exporting: ", "LandscapeColor");
 				Exporters.ExportLandscapeColor(in data, OutputPath.FullName);
+				Debug.EndProcess(id, " Exported!");
+
+
+				id = Debug.StartProcess("Exporting: ", "TextureBlend");
+				Exporters.ExportTextureBlend(in data, OutputPath.FullName);
+				Debug.EndProcess(id, " Exported!");
+
+
+				id = Debug.StartProcess("Exporting: ", "WaterHeight");
+				Exporters.ExportWaterHeight(in data, OutputPath.FullName);
+				Debug.EndProcess(id, " Exported!");
 			}
 
 
 
 			// Finish
+			Console.WriteLine(); Console.WriteLine();
 			Console.WriteLine("Done with everything!");
 			Console.ReadKey();
 		}

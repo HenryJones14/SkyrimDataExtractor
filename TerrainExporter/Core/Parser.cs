@@ -1,3 +1,4 @@
+using System;
 using TerrainExporter.Data;
 
 namespace TerrainExporter.Core
@@ -20,8 +21,8 @@ namespace TerrainExporter.Core
 		{
 			using (StreamReader reader = new StreamReader(Path))
 			{
-				List<string> lines = new List<string>();
-				List<ParsedData> data = new List<ParsedData>();
+				SimpleArray<string> lines = new SimpleArray<string>();
+				SimpleArray<ParsedData> data = new SimpleArray<ParsedData>();
 
 				string? line = null;
 				bool cell = false;
@@ -37,28 +38,22 @@ namespace TerrainExporter.Core
 					}
 
 					// Seperate block
-					if(!parse)
+					else
 					{
-						string sub = line;
+						if (line.Length > 8)
+						{
+							string sub = line.Substring(8);
 
-						try
-						{
-							sub = line.Substring(8);
-						}
-						catch (Exception)
-						{
-
-						}
-
-						if (sub.StartsWith(": #") && sub.EndsWith("[CELL]"))
-						{
-							cell = true;
-						}
-						else if (cell)
-						{
-							if (sub.StartsWith(": #") && (sub.EndsWith("[LAND]") || sub.EndsWith("[REFR]")))
+							if (sub.StartsWith(": #") && sub.EndsWith("[CELL]"))
 							{
-								parse = true;
+								cell = true;
+							}
+							else if (cell)
+							{
+								if (sub.StartsWith(": #") && (sub.EndsWith("[LAND]") || sub.EndsWith("[REFR]")))
+								{
+									parse = true;
+								}
 							}
 						}
 					}
@@ -66,7 +61,7 @@ namespace TerrainExporter.Core
 					// Parse block
 					if (parse)
 					{
-						data.Add(ParseBlock(lines.ToArray()));
+						data.Add(ParseBlock(in lines));
 
 						if (line != null)
 						{
@@ -80,8 +75,12 @@ namespace TerrainExporter.Core
 						}
 					}
 
+#pragma warning disable CS8604 // This will never be null (null exits before coming here)
+
 					// Add line to cashe
 					lines.Add(line);
+
+#pragma warning restore CS8604 // This will never be null (null exits before coming here)
 				}
 
 				reader.Dispose();
@@ -89,7 +88,7 @@ namespace TerrainExporter.Core
 			}
 		}
 
-		private static ParsedData ParseBlock(string[] Lines)
+		private static ParsedData ParseBlock(in SimpleArray<string> Lines)
 		{
 			ParsedData data = new ParsedData();
 
@@ -109,7 +108,7 @@ namespace TerrainExporter.Core
 
 						for (int j = 0; j < hex.Length; j++)
 						{
-							bytes[j] = Convert.ToByte(hex[j], 16);
+							bytes[j] = ToByte(hex[j]);
 						}
 					}
 
@@ -162,7 +161,7 @@ namespace TerrainExporter.Core
 
 					for (int j = 0; j < hex.Length; j++)
 					{
-						bytes[j] = Convert.ToByte(hex[j], 16);
+						bytes[j] = ToByte(hex[j]);
 					}
 
 					data.HeightRecord = bytes;
@@ -207,6 +206,40 @@ namespace TerrainExporter.Core
 			}
 
 			return data;
+		}
+
+		public static byte ToByte(string Hex)
+		{
+			byte result = 0;
+			result |= (byte)(Hex[0] << 4);
+			result |= (byte)(Hex[1] & 0x0F);
+			return result;
+		}
+
+		private static byte[] ToByteArray(string hex)
+		{
+			// array to put the result in
+			byte[] bytes = new byte[hex.Length / 2];
+			// variable to determine shift of high/low nibble
+			int shift = 4;
+			// offset of the current byte in the array
+			int offset = 0;
+			// loop the characters in the string
+			foreach (char c in hex)
+			{
+				// get character code in range 0-9, 17-22
+				// the % 32 handles lower case characters
+				int b = (c - '0') % 32;
+				// correction for a-f
+				if (b > 9) b -= 7;
+				// store nibble (4 bits) in byte array
+				bytes[offset] |= (byte)(b << shift);
+				// toggle the shift variable between 0 and 4
+				shift ^= 4;
+				// move to next byte
+				if (shift != 0) offset++;
+			}
+			return bytes;
 		}
 	}
 }
